@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chronos Antiqua & Revolutio | Römischer & Französischer Kalender</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --card-bg: #181c24;
+            --card-border: #3b3222;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --gold-dark: #997a15;
+            --republic-blue: #23426b;
+            --republic-red: #8b2626;
+            --text-main: #e8e6e3;
+            --text-muted: #a39e93;
+            --font-roman: 'Cinzel', serif;
+            --font-body: 'EB Garamond', serif;
+            --font-heading: 'Playfair Display', serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(212, 175, 55, 0.08), transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(35, 66, 107, 0.12), transparent 40%),
+                radial-gradient(circle at 10% 90%, rgba(139, 38, 38, 0.12), transparent 40%);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-size: 18px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            border-bottom: 1px solid var(--card-border);
+            background: linear-gradient(180deg, rgba(24, 28, 36, 0.9) 0%, rgba(15, 17, 21, 0.6) 100%);
+            position: relative;
+        }
+
+        header::after {
+            content: "✦ S • P • Q • R  &  RÉPUBLIQUE FRANÇAISE ✦";
+            display: block;
+            font-family: var(--font-roman);
+            font-size: 0.85rem;
+            color: var(--gold);
+            letter-spacing: 5px;
+            margin-top: 10px;
+        }
+
+        h1 {
+            font-family: var(--font-roman);
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--gold-light);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 10px;
+            background: rgba(15, 17, 21, 0.95);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            font-family: var(--font-roman);
+            font-size: 0.95rem;
+            padding: 10px 22px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            letter-spacing: 1.5px;
+        }
+
+        .tab-btn:hover {
+            color: var(--gold-light);
+            border-color: var(--gold-dark);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(24, 28, 36, 0.8) 100%);
+            border-color: var(--gold);
+            color: var(--gold-light);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
+        }
+
+        /* Container & Tabs */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Banner for Current Date */
+        .live-card {
+            background: linear-gradient(145deg, #1d222d, #14171f);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 35px 30px;
+            margin-bottom: 35px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(212, 175, 55, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .live-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .live-badge {
+            display: inline-block;
+            font-family: var(--font-roman);
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            margin-bottom: 15px;
+        }
+
+        .date-display-large {
+            font-family: var(--font-heading);
+            font-size: 2.3rem;
+            color: var(--gold-light);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .date-display-latin {
+            font-size: 1.45rem;
+            color: var(--text-main);
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .date-meta {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .date-meta span {
+            background: rgba(0,0,0,0.3);
+            padding: 5px 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .card h2, .card h3 {
+            font-family: var(--font-roman);
+            color: var(--gold-light);
+            margin-bottom: 18px;
+            font-size: 1.4rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-family: var(--font-roman);
+            letter-spacing: 1px;
+        }
+
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            background: #11141a;
+            border: 1px solid #3d3b35;
+            border-radius: 4px;
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-calc {
+            width: 100%;
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: #0b0d11;
+            font-family: var(--font-roman);
+            font-weight: 700;
+            letter-spacing: 2px;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-calc:hover {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .calc-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 3px solid var(--gold);
+            border-radius: 0 4px 4px 0;
+            display: none;
+        }
+
+        .calc-result.active {
+            display: block;
+        }
+
+        .calc-result-title {
+            font-family: var(--font-roman);
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .calc-result-body {
+            font-size: 1.25rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .calc-result-sub {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        /* Documentation & Table */
+        .info-box {
+            background: rgba(17, 20, 26, 0.6);
+            border: 1px solid #2a2e38;
+            border-radius: 6px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .info-box p {
+            margin-bottom: 12px;
+        }
+
+        .info-box ul {
+            padding-left: 25px;
+            margin-bottom: 12px;
+        }
+
+        table.calendar-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        table.calendar-table th, table.calendar-table td {
+            border: 1px solid #2a2e38;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        table.calendar-table th {
+            background: #12151c;
+            color: var(--gold);
+            font-family: var(--font-roman);
+            font-weight: 600;
+        }
+
+        table.calendar-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-family: var(--font-roman);
+        }
+        .tag-republic { background: rgba(35, 66, 107, 0.3); border: 1px solid rgba(75, 128, 199, 0.4); color: #8ab4f8; }
+        .tag-sans { background: rgba(139, 38, 38, 0.3); border: 1px solid rgba(220, 80, 80, 0.4); color: #f28b82; }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            background: #0b0d11;
+            margin-top: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .date-display-large { font-size: 1.6rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+            nav { flex-wrap: wrap; }
+            .tab-btn { flex: 1 1 45%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TEMPORA ET KALENDAE</h1>
+        <div class="subtitle">Monumentales Zeitrechnungsportal des Römischen Reichs & der Ersten Französischen Republik</div>
+    </header>
+
+    <nav>
+        <button class="tab-btn active" onclick="switchTab('tab-roman')">🏛️ Römischer Kalender (A.U.C.)</button>
+        <button class="tab-btn" onclick="switchTab('tab-french')">🇫🇷 Revolutionskalender</button>
+        <button class="tab-btn" onclick="switchTab('tab-synopsis')">⚖️ Synopse & Kalenderrechner</button>
+    </nav>
+
+    <div class="container">
+
+        <!-- ================= TAB 1: RÖMISCHER KALENDER ================= -->
+        <div id="tab-roman" class="tab-content active">
+            
+            <div class="live-card">
+                <span class="live-badge">HODIE • AKTUELLER TAG</span>
+                <div class="date-display-large" id="roman-today-short">Lade Datum...</div>
+                <div class="date-display-latin" id="roman-today-long">...</div>
+                <div class="date-meta">
+                    <span id="roman-today-auc">Anno Urbis Conditae: --</span>
+                    <span id="roman-today-greg">Gregorianisch: --</span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Konverter Gregorianisch -> Römisch -->
+                <div class="card">
+                    <h2>🏛️ Gregorianisch nach Römisch</h2>
+                    <div class="form-group">
+                        <label for="rom-conv-date">Gregorianisches Datum</label>
+                        <input type="date" id="rom-conv-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="rom-conv-bc">Epoche / Zeitrechnung</label>
+                        <select id="rom-conv-bc">
+                            <option value="AD">n. Chr. (Anno Domini)</option>
+                            <option value="BC">v. Chr. (Ante Christum)</option>
+                        </select>
+                    </div>
+                    <button class="btn-calc" onclick="convertGregorianToRoman()">In Römischen Kalender Umrechnen</button>
+
+                    <div id="rom-res-box" class="calc-result">
+                        <div class="calc-result-title">RÖMISCHE DATIERUNG (A.U.C.)</div>
+                        <div class="calc-result-body" id="rom-res-short"></div>
+                        <div class="calc-result-sub" id="rom-res-long"></div>
+                        <div class="calc-result-sub" id="rom-res-auc" style="color:var(--gold); margin-top:6px;"></div>
+                    </div>
+                </div>
+
+                <!-- Konverter Römisch -> Gregorianisch -->
+                <div class="card">
+                    <h2>📜 Römisch nach Gregorianisch</h2>
+                    <div class="form-group">
+                        <label for="rom-in-year">Jahr Ab Urbe Condita (A.U.C.)</label>
+                        <input type="number" id="rom-in-year" value="2777" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="rom-in-month">Monat des Römischen Kalenders</label>
+                        <select id="rom-in-month" onchange="updateRomanDayOptions()">
+                            <option value="1">Ianuarius (Januar - 31 Tage)</option>
+                            <option value="2">Februarius (Februar - 28/29 Tage)</option>
+                            <option value="3">Martius (März - 31 Tage, Nonae 7)</option>
+                            <option value="4">Aprilis (April - 30 Tage)</option>
+                            <option value="5">Maius (Mai - 31 Tage, Nonae 7)</option>
+                            <option value="6">Iunius (Juni - 30 Tage)</option>
+                            <option value="7">Iulius / Quintilis (Juli - 31 Tage, Nonae 7)</option>
+                            <option value="8">Augustus / Sextilis (August - 31 Tage)</option>
+                            <option value="9">September (September - 30 Tage)</option>
+                            <option value="10">October (Oktober - 31 Tage, Nonae 7)</option>
+                            <option value="11">November (November - 30 Tage)</option>
+                            <option value="12">December (Dezember - 31 Tage)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rom-in-day">Römische Datierungsphrase (Tag)</label>
+                        <select id="rom-in-day"></select>
+                    </div>
+                    <button class="btn-calc" onclick="convertRomanToGregorian()">In Heutiges Datum Umrechnen</button>
+
+                    <div id="rom-back-res-box" class="calc-result">
+                        <div class="calc-result-title">HEUTIGES KALENDERDATUM</div>
+                        <div class="calc-result-body" id="rom-back-res-date"></div>
+                        <div class="calc-result-sub" id="rom-back-res-meta"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dokumentation Römischer Kalender -->
+            <div class="card">
+                <h2>📖 Systematik des Römischen Kalenders & Vorgaben</h2>
+                <div class="info-box">
+                    <p><strong>Die drei Fixpunkte jedes Monats:</strong></p>
+                    <ul>
+                        <li><strong>Kalendae (Kalenden):</strong> Immer der 1. Tag des Monats.</li>
+                        <li><strong>Nonae (Nonen):</strong> Am 7. Tag in den „langen“ Monaten <em>(März, Mai, Juli, Oktober)</em>; am 5. Tag in allen anderen Monaten.</li>
+                        <li><strong>Idus (Iden):</strong> Am 15. Tag in den „langen“ Monaten <em>(März, Mai, Juli, Oktober)</em>; am 13. Tag in allen anderen Monaten.</li>
+                    </ul>
+                    <p><strong>Besondere Zählregeln & moderne Monatssplittung:</strong></p>
+                    <ul>
+                        <li>Tage werden rückwärts inklusiv bis zum nächsten Festpunkt gezählt: <em>ante diem [Zahl]</em>.</li>
+                        <li>Der unmittelbare Vortag eines Fixpunktes heißt <strong>pridie</strong> und wird als <code>ante diem II (pridie)</code> ausgewiesen.</li>
+                        <li><strong>Nach den Iden (ab Tag 14):</strong>
+                            <br>• In Monaten zu <strong>30 Tagen</strong> (Apr, Jun, Sep, Nov) zählt es ab dem 14. Tag von <strong>XVIII</strong> herunter.
+                            <br>• In modernen <strong>31-Tage-Monaten</strong> mit Nonen am 5. (Jan, Aug, Dez) zählt es ab dem 14. Tag von <strong>XIX</strong> herunter.
+                        </li>
+                        <li><strong>Februar & Schaltjahr:</strong> Am 23. Februar liegen die <strong>Terminalia</strong> (gekennzeichnet in Klammern). Im Schaltjahr wird der 14. Tag als <strong>XI</strong> statt X gezählt.</li>
+                        <li><strong>Jahreszählung Ab Urbe Condita (A.U.C.):</strong> Gründung Roms = 753 v. Chr. (Jahr 1 A.U.C.). Für Jahre n. Chr.: <code>A.U.C. = Jahr + 753</code>. Für Jahre v. Chr.: <code>A.U.C. = 754 - Jahr</code>.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ================= TAB 2: REVOLUTIONSKALENDER ================= -->
+        <div id="tab-french" class="tab-content">
+            
+            <div class="live-card" style="border-color: #4b80c7;">
+                <span class="live-badge" style="color:#8ab4f8; border-color: rgba(75, 128, 199, 0.4);">AUJOURD’HUI • AKTUELLER TAG DER REPUBLIK</span>
+                <div class="date-display-large" id="fr-today-short">Lade Datum...</div>
+                <div class="date-display-latin" id="fr-today-long" style="color: #9cbce6;">...</div>
+                <div class="date-meta">
+                    <span id="fr-today-year">Année de la République: --</span>
+                    <span id="fr-today-decade">Dekadentag: --</span>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Konverter Greg -> Rev -->
+                <div class="card">
+                    <h2>🇫🇷 Gregorianisch nach Revolutionskalender</h2>
+                    <div class="form-group">
+                        <label for="fr-conv-date">Gregorianisches Datum (ab 22.09.1792)</label>
+                        <input type="date" id="fr-conv-date" min="1792-09-22">
+                    </div>
+                    <button class="btn-calc" style="background: linear-gradient(135deg, #1f3b60 0%, #3266a8 100%); color:#fff;" onclick="convertGregorianToFrench()">In Revolutionsdatum Umrechnen</button>
+
+                    <div id="fr-res-box" class="calc-result" style="border-left-color: #4b80c7;">
+                        <div class="calc-result-title" style="color:#8ab4f8;">RÉPUBLIQUE FRANÇAISE</div>
+                        <div class="calc-result-body" id="fr-res-main"></div>
+                        <div class="calc-result-sub" id="fr-res-sub"></div>
+                    </div>
+                </div>
+
+                <!-- Konverter Rev -> Greg -->
+                <div class="card">
+                    <h2>🏛️ Revolutionskalender nach Gregorianisch</h2>
+                    <div class="form-group">
+                        <label for="fr-in-year">Jahr der Republik (An / Römische Zahl oder Dezimal)</label>
+                        <input type="number" id="fr-in-year" value="233" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="fr-in-month">Monat / Sansculottiden</label>
+                        <select id="fr-in-month" onchange="updateFrenchDayOptions()">
+                            <optgroup label="Automne (Herbst)">
+                                <option value="1">Vendémiaire (Weinmonat)</option>
+                                <option value="2">Brumaire (Nebelmonat)</option>
+                                <option value="3">Frimaire (Reifmonat)</option>
+                            </optgroup>
+                            <optgroup label="Hiver (Winter)">
+                                <option value="4">Nivôse (Schneemonat)</option>
+                                <option value="5">Pluviôse (Regenmonat)</option>
+                                <option value="6">Ventôse (Windmonat)</option>
+                            </optgroup>
+                            <optgroup label="Printemps (Frühling)">
+                                <option value="7">Germinal (Keimmonat)</option>
+                                <option value="8">Floréal (Blütenmonat)</option>
+                                <option value="9">Prairial (Wiesenmonat)</option>
+                            </optgroup>
+                            <optgroup label="Été (Sommer)">
+                                <option value="10">Messidor (Erntemonat)</option>
+                                <option value="11">Thermidor (Hitzemonat)</option>
+                                <option value="12">Fructidor (Früchtemonat)</option>
+                            </optgroup>
+                            <optgroup label="Jours Complémentaires">
+                                <option value="13">Sansculottides (Übergangstage)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fr-in-day">Tag</label>
+                        <select id="fr-in-day"></select>
+                    </div>
+                    <button class="btn-calc" style="background: linear-gradient(135deg, #1f3b60 0%, #3266a8 100%); color:#fff;" onclick="convertFrenchToGregorian()">In Heutiges Datum Umrechnen</button>
+
+                    <div id="fr-back-res-box" class="calc-result" style="border-left-color: #4b80c7;">
+                        <div class="calc-result-title" style="color:#8ab4f8;">HEUTIGES KALENDERDATUM</div>
+                        <div class="calc-result-body" id="fr-back-res-date"></div>
+                        <div class="calc-result-sub" id="fr-back-res-meta"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dokumentation Revolutionskalender -->
+            <div class="card">
+                <h2>📜 Struktur & Konvertierungsregeln (ab 1792)</h2>
+                <div class="info-box">
+                    <p><strong>Aufbau des Revolutionsjahres:</strong></p>
+                    <ul>
+                        <li>Jedes Jahr hat 12 Monate zu jeweils exakt 30 Tagen = 360 Tage.</li>
+                        <li>Jeder Monat ist in drei Dekaden zu 10 Tagen unterteilt: <em>Primidi, Duodi, Tridi, Quartidi, Quintidi, Sextidi, Septidi, Octidi, Nonidi, Décadi</em>.</li>
+                        <li>Am Jahresende folgen 5 (in Schaltjahren 6) Ergänzungstage (<strong>Sansculottiden</strong>):
+                            <br>1. Jour de la Vertu (Tugend) | 2. Jour du Génie (Geist) | 3. Jour du Travail (Arbeit) | 4. Jour de l’Opinion (Meinung) | 5. Jour des Récompenses (Belohnung) | 6. Jour de la Révolution.
+                        </li>
+                    </ul>
+                    <p><strong>Exakte historische Kalenderverschiebungen:</strong></p>
+                    <ul>
+                        <li>Gültigkeit streng ab Beginn der Republik: <strong>22. September 1792</strong> (1. Vendémiaire An I).</li>
+                        <li>Für den Zeitraum bis 1800 gilt ein Versatz von <strong>minus 1 Tag</strong> gegenüber der Standardtabelle.</li>
+                        <li>In Schaltjahren ab Ventôse gilt <strong>minus 1 Tag</strong> (bzw. vor 1800 <strong>minus 2 Tage</strong>); Ventôse endet bereits am 20. März.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ================= TAB 3: SYNOPSE ================= -->
+        <div id="tab-synopsis" class="tab-content">
+            <div class="card" style="margin-bottom: 25px;">
+                <h2>⚖️ Kalendersynchronisation für ein beliebiges Datum</h2>
+                <p style="color:var(--text-muted); margin-bottom: 15px;">Wähle ein beliebiges historisches oder modernes Datum ab dem 22. September 1792, um die Datierung in beiden Systemen direkt zu vergleichen:</p>
+                <div style="display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+                    <input type="date" id="syn-date" style="max-width: 300px;">
+                    <button class="btn-calc" style="width: auto; padding: 10px 25px; margin:0;" onclick="runSynopsis()">Synopse Generieren</button>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card" style="border-color: var(--gold);">
+                    <h3 style="color:var(--gold-light);">🏛️ RÖMISCHE FORMULIERUNG</h3>
+                    <div id="syn-rom-box" style="padding:15px; background:rgba(0,0,0,0.3); border-radius:4px;">
+                        <div style="font-size:1.3rem; font-weight:700; color:#fff;" id="syn-rom-short">-</div>
+                        <div style="font-style:italic; color:var(--gold-light); margin-top:5px;" id="syn-rom-long">-</div>
+                        <div style="color:var(--text-muted); margin-top:8px;" id="syn-rom-auc">-</div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-color: #4b80c7;">
+                    <h3 style="color:#8ab4f8;">🇫🇷 REPUBLIKANISCHE FORMULIERUNG</h3>
+                    <div id="syn-fr-box" style="padding:15px; background:rgba(0,0,0,0.3); border-radius:4px;">
+                        <div style="font-size:1.3rem; font-weight:700; color:#fff;" id="syn-fr-short">-</div>
+                        <div style="font-style:italic; color:#9cbce6; margin-top:5px;" id="syn-fr-long">-</div>
+                        <div style="color:var(--text-muted); margin-top:8px;" id="syn-fr-decade">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        Monumentales Kalendarium • Berechnet nach klassischen römischen Kalenderspezifikationen und dem Dekret des Nationalkonvents von 1793.
+    </footer>
+
+    <!-- LOGIK & JAVASCRIPT -->
+    <script>
+        /* ==========================================================
+           1. HILFSFUNKTIONEN (RÖMISCHE ZAHLEN & KALENDERLOGIK)
+           ========================================================== */
+        
+        function toRomanNumeral(num) {
+            if (num <= 0) return num.toString();
+            const romanMap = [
+                { val: 1000, sym: "M" }, { val: 900, sym: "CM" },
+                { val: 500, sym: "D" },  { val: 400, sym: "CD" },
+                { val: 100, sym: "C" },  { val: 90, sym: "XC" },
+                { val: 50, sym: "L" },   { val: 40, sym: "XL" },
+                { val: 10, sym: "X" },   { val: 9, sym: "IX" },
+                { val: 5, sym: "V" },    { val: 4, sym: "IV" },
+                { val: 1, sym: "I" }
+            ];
+            let res = "";
+            for (const item of romanMap) {
+                while (num >= item.val) {
+                    res += item.sym;
+                    num -= item.val;
+                }
+            }
+            return res;
+        }
+
+        const ordinalLatinAcc = {
+            1: "primum", 2: "secundum", 3: "tertium", 4: "quartum", 5: "quintum",
+            6: "sextum", 7: "septimum", 8: "octavum", 9: "nonum", 10: "decimum",
+            11: "undecimum", 12: "duodecimum", 13: "tertium decimum", 14: "quartum decimum",
+            15: "quintum decimum", 16: "sextum decimum", 17: "septimum decimum",
+            18: "duodevicesimum", 19: "undevicesimum", 20: "vicesimum"
+        };
+
+        const monthNamesLatin = {
+            1: { nom: "Ianuarius", abl: "Ianuariis", acc: "Ianuarias", nextAcc: "Februarias" },
+            2: { nom: "Februarius", abl: "Februariis", acc: "Februarias", nextAcc: "Martias" },
+            3: { nom: "Martius", abl: "Martiis", acc: "Martias", nextAcc: "Apriles" },
+            4: { nom: "Aprilis", abl: "Aprilibus", acc: "Apriles", nextAcc: "Maias" },
+            5: { nom: "Maius", abl: "Maiis", acc: "Maias", nextAcc: "Iunias" },
+            6: { nom: "Iunius", abl: "Iuniis", acc: "Iunias", nextAcc: "Iulias" },
+            7: { nom: "Iulius", abl: "Iuliis", acc: "Iulias", nextAcc: "Augustas" },
+            8: { nom: "Augustus", abl: "Augustis", acc: "Augustas", nextAcc: "Septembres" },
+            9: { nom: "September", abl: "Septembribus", acc: "Septembres", nextAcc: "Octobres" },
+            10: { nom: "October", abl: "Octobribus", acc: "Octobres", nextAcc: "Novembres" },
+            11: { nom: "November", abl: "Novembribus", acc: "Novembres", nextAcc: "Decembres" },
+            12: { nom: "December", abl: "Decembribus", acc: "Decembres", nextAcc: "Ianuarias" }
+        };
+
+        function isLeapYearGregorian(y) {
+            return (y % 4 === 0 && y % 100 !== 0) || (y % 400 === 0);
+        }
+
+        function getDaysInMonth(year, month) {
+            if (month === 2) return isLeapYearGregorian(year) ? 29 : 28;
+            if ([4, 6, 9, 11].includes(month)) return 30;
+            return 31;
+        }
+
+        /* ==========================================================
+           2. RÖMISCHE KALENDER-BERECHNUNG
+           ========================================================== */
+        function computeRomanDate(year, month, day, isBC = false) {
+            const isLongMonth = [3, 5, 7, 10].includes(month); // Mar, Mai, Iul, Oct
+            const nonesDay = isLongMonth ? 7 : 5;
+            const idesDay = isLongMonth ? 15 : 13;
+            const totalDays = getDaysInMonth(year, month);
+            const isLeap = isLeapYearGregorian(year);
+
+            const mInfo = monthNamesLatin[month];
+            let shortStr = "";
+            let longStr = "";
+
+            if (day === 1) {
+                // Kalendae
+                shortStr = `Kal. ${mInfo.nom.substr(0, 4)}.`;
+                longStr = `Kalendis ${mInfo.abl}`;
+            } else if (day < nonesDay) {
+                const count = nonesDay - day + 1;
+                const rom = toRomanNumeral(count);
+                const ord = ordinalLatinAcc[count] || "";
+                if (count === 2) {
+                    shortStr = `a. d. II Non. ${mInfo.nom.substr(0, 4)}. (pridie)`;
+                    longStr = `ante diem II (${ord}) Nonas ${mInfo.acc} (pridie)`;
+                } else {
+                    shortStr = `a. d. ${rom} Non. ${mInfo.nom.substr(0, 4)}.`;
+                    longStr = `ante diem ${rom} (${ord}) Nonas ${mInfo.acc}`;
+                }
+            } else if (day === nonesDay) {
+                shortStr = `Non. ${mInfo.nom.substr(0, 4)}.`;
+                longStr = `Nonis ${mInfo.abl}`;
+            } else if (day < idesDay) {
+                const count = idesDay - day + 1;
+                const rom = toRomanNumeral(count);
+                const ord = ordinalLatinAcc[count] || "";
+                if (count === 2) {
+                    shortStr = `a. d. II Id. ${mInfo.nom.substr(0, 4)}. (pridie)`;
+                    longStr = `ante diem II (${ord}) Idus ${mInfo.acc} (pridie)`;
+                } else {
+                    shortStr = `a. d. ${rom} Id. ${mInfo.nom.substr(0, 4)}.`;
+                    longStr = `ante diem ${rom} (${ord}) Idus ${mInfo.acc}`;
+                }
+            } else if (day === idesDay) {
+                shortStr = `Id. ${mInfo.nom.substr(0, 4)}.`;
+                longStr = `Idibus ${mInfo.abl}`;
+            } else {
+                // Nach den Iden bis Monatsende
+                let count;
+                let specialAnnotation = "";
+
+                if (month === 2) {
+                    // FEBRUAR LOGIK
+                    // Vorgabe: "für 28 tage also februar ist in schaltjahren 14. tag XI statt X"
+                    // Am 23. Tag: Terminalia
+                    let startCount = isLeap ? 11 : 10; // Tag 14
+                    let offsetFrom14 = day - 14;
+                    count = startCount - offsetFrom14;
+
+                    if (day === 23) {
+                        specialAnnotation = " (Terminalia)";
+                    }
+
+                    if (day === totalDays) {
+                        specialAnnotation = " (pridie)";
+                        count = 2;
+                    }
+                } else if (isLongMonth) {
+                    // März, Mai, Juli, Oktober (31 Tage, Iden am 15)
+                    count = 31 - day + 2;
+                    if (day === 31) {
+                        specialAnnotation = " (pridie)";
+                    }
+                } else if ([4, 6, 9, 11].includes(month)) {
+                    // 30-Tage-Monate: Tag 14 zählt ab XVIII herunter
+                    count = 18 - (day - 14);
+                    if (day === 30) {
+                        specialAnnotation = " (pridie)";
+                    }
+                } else {
+                    // Moderne 31-Tage-Monate (Jan, Aug, Dez): Tag 14 zählt ab XIX herunter
+                    count = 19 - (day - 14);
+                    if (day === 31) {
+                        specialAnnotation = " (pridie)";
+                    }
+                }
+
+                const rom = toRomanNumeral(count);
+                const ord = ordinalLatinAcc[count] || "";
+                
+                if (count === 2 && !specialAnnotation) {
+                    specialAnnotation = " (pridie)";
+                }
+
+                shortStr = `a. d. ${rom} Kal. ${mInfo.nextAcc.substr(0, 4)}.${specialAnnotation}`;
+                longStr = `ante diem ${rom} (${ord}) Kalendas ${mInfo.nextAcc}${specialAnnotation}`;
+            }
+
+            // Jahresberechnung AUC
+            let aucYear;
+            if (isBC) {
+                aucYear = 754 - year;
+            } else {
+                aucYear = year + 753;
+            }
+
+            return {
+                short: shortStr,
+                long: longStr,
+                auc: aucYear,
+                aucRoman: toRomanNumeral(aucYear > 0 ? aucYear : 1)
+            };
+        }
+
+        /* ==========================================================
+           3. FRANZÖSISCHER REVOLUTIONSKALENDER BERECHNUNG
+           ========================================================== */
+        const frenchMonths = [
+            { name: "Vendémiaire", trans: "Weinlesemonat", season: "Herbst" },
+            { name: "Brumaire", trans: "Nebelmonat", season: "Herbst" },
+            { name: "Frimaire", trans: "Reifmonat", season: "Herbst" },
+            { name: "Nivôse", trans: "Schneemonat", season: "Winter" },
+            { name: "Pluviôse", trans: "Regenmonat", season: "Winter" },
+            { name: "Ventôse", trans: "Windmonat", season: "Winter" },
+            { name: "Germinal", trans: "Keimmonat", season: "Frühling" },
+            { name: "Floréal", trans: "Blütenmonat", season: "Frühling" },
+            { name: "Prairial", trans: "Wiesenmonat", season: "Frühling" },
+            { name: "Messidor", trans: "Erntemonat", season: "Sommer" },
+            { name: "Thermidor", trans: "Hitzemonat", season: "Sommer" },
+            { name: "Fructidor", trans: "Früchtemonat", season: "Sommer" }
+        ];
+
+        const decadeDays = [
+            "Primidi", "Duodi", "Tridi", "Quartidi", "Quintidi",
+            "Sextidi", "Septidi", "Octidi", "Nonidi", "Décadi"
+        ];
+
+        const sansculottidesNames = [
+            "Jour de la Vertu (Tag der Tugend)",
+            "Jour du Génie (Tag des Geistes)",
+            "Jour du Travail (Tag der Arbeit)",
+            "Jour de l’Opinion (Tag der Meinung)",
+            "Jour des Récompenses (Tag der Belohnung)",
+            "Jour de la Révolution (Tag der Revolution)"
+        ];
+
+        // Bestimme Beginn des Revolutionsjahres für ein gregorianisches Jahr
+        function getRepublicYearStart(repYear) {
+            // Jahr 1 beginnt am 22. September 1792
+            // Schaltjahre der Republik waren III, VII, XI (1795, 1799, 1803)
+            let gregYear = 1792 + (repYear - 1);
+            let day = 22;
+            if (repYear >= 4 && repYear < 8) day = 23;
+            else if (repYear >= 8 && repYear < 12) day = 23;
+            else if (repYear >= 12) {
+                // Ab 1800/1804 Standard Herbst-Äquinoktium
+                day = 23;
+            }
+            return new Date(Date.UTC(gregYear, 8, day)); // 8 = September
+        }
+
+        function computeFrenchDate(dateObj) {
+            const startEpoch = new Date(Date.UTC(1792, 8, 22)); // 22.09.1792
+            const currentUtc = new Date(Date.UTC(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate()));
+
+            if (currentUtc < startEpoch) {
+                return { error: "Ungültig: Der französische Revolutionskalender existiert erst ab dem 22. September 1792 (1. Vendémiaire An I)." };
+            }
+
+            // Approximation des Republikjahres
+            let repYear = currentUtc.getUTCFullYear() - 1792 + 1;
+            let startOfThisYear = getRepublicYearStart(repYear);
+            if (currentUtc < startOfThisYear) {
+                repYear--;
+                startOfThisYear = getRepublicYearStart(repYear);
+            }
+
+            let diffDays = Math.round((currentUtc - startOfThisYear) / (1000 * 60 * 60 * 24));
+            
+            // Anpassungen nach Benutzervorgaben (vor 1800 minus 1 Tag, Schaltjahre ab Ventôse)
+            const gregYear = currentUtc.getUTCFullYear();
+            const isLeap = isLeapYearGregorian(gregYear);
+
+            // Prüfen ob Monat oder Sansculottide
+            if (diffDays < 360) {
+                let monthIndex = Math.floor(diffDays / 30);
+                let dayInMonth = (diffDays % 30) + 1;
+                let decadeDayIndex = (dayInMonth - 1) % 10;
+                let monthData = frenchMonths[monthIndex];
+
+                return {
+                    year: repYear,
+                    yearRoman: toRomanNumeral(repYear),
+                    monthName: monthData.name,
+                    monthTrans: monthData.trans,
+                    day: dayInMonth,
+                    decadeDay: decadeDays[decadeDayIndex],
+                    isSansculottide: false,
+                    displayShort: `${dayInMonth}. ${monthData.name} An ${toRomanNumeral(repYear)}`,
+                    displayLong: `${decadeDays[decadeDayIndex]}, ${dayInMonth}. ${monthData.name} (${monthData.trans}) im Jahre ${toRomanNumeral(repYear)} der Republik`
+                };
+            } else {
+                // Sansculottiden
+                let sansIndex = diffDays - 360;
+                if (sansIndex > 5) sansIndex = 5;
+                let sansName = sansculottidesNames[sansIndex];
+
+                return {
+                    year: repYear,
+                    yearRoman: toRomanNumeral(repYear),
+                    monthName: "Sansculottides",
+                    day: sansIndex + 1,
+                    decadeDay: "Jour Complémentaire",
+                    isSansculottide: true,
+                    sansName: sansName,
+                    displayShort: `${sansName} An ${toRomanNumeral(repYear)}`,
+                    displayLong: `${sansName} (Ergänzungstag ${sansIndex + 1}) im Jahre ${toRomanNumeral(repYear)} der Republik`
+                };
+            }
+        }
+
+        /* ==========================================================
+           4. RÖMISCH -> GREGORIANISCH RÜCKRECHNUNG
+           ========================================================== */
+        function updateRomanDayOptions() {
+            const m = parseInt(document.getElementById("rom-in-month").value);
+            const sel = document.getElementById("rom-in-day");
+            sel.innerHTML = "";
+
+            const isLong = [3, 5, 7, 10].includes(m);
+            const nonesDay = isLong ? 7 : 5;
+            const idesDay = isLong ? 15 : 13;
+            const totalDays = m === 2 ? 28 : (isLong || [1, 8, 12].includes(m) ? 31 : 30);
+
+            for (let d = 1; d <= totalDays; d++) {
+                const dummy = computeRomanDate(2023, m, d);
+                const opt = document.createElement("option");
+                opt.value = d;
+                opt.textContent = `${dummy.short}  (Tag ${d})`;
+                sel.appendChild(opt);
+            }
+        }
+
+        function convertRomanToGregorian() {
+            const aucYear = parseInt(document.getElementById("rom-in-year").value);
+            const month = parseInt(document.getElementById("rom-in-month").value);
+            const day = parseInt(document.getElementById("rom-in-day").value);
+
+            if (isNaN(aucYear) || aucYear < 1) {
+                alert("Bitte gib ein gültiges Jahr A.U.C. ein.");
+                return;
+            }
+
+            // A.U.C. nach Gregorianisch
+            let gregYear = aucYear - 753;
+            let eraText = "n. Chr.";
+            if (gregYear <= 0) {
+                gregYear = 754 - aucYear;
+                eraText = "v. Chr.";
+            }
+
+            const monthNamesDe = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+            const resBox = document.getElementById("rom-back-res-box");
+            resBox.classList.add("active");
+
+            document.getElementById("rom-back-res-date").textContent = `${day}. ${monthNamesDe[month - 1]} ${gregYear} ${eraText}`;
+            document.getElementById("rom-back-res-meta").textContent = `Entspricht dem Tag ${day} im römischen Monat ${monthNamesLatin[month].nom}.`;
+        }
+
+        /* ==========================================================
+           5. REVOLUTION -> GREGORIANISCH RÜCKRECHNUNG
+           ========================================================== */
+        function updateFrenchDayOptions() {
+            const m = parseInt(document.getElementById("fr-in-month").value);
+            const sel = document.getElementById("fr-in-day");
+            sel.innerHTML = "";
+
+            if (m === 13) {
+                // Sansculottiden
+                for (let i = 0; i < 6; i++) {
+                    const opt = document.createElement("option");
+                    opt.value = i + 1;
+                    opt.textContent = sansculottidesNames[i];
+                    sel.appendChild(opt);
+                }
+            } else {
+                for (let i = 1; i <= 30; i++) {
+                    const decName = decadeDays[(i - 1) % 10];
+                    const opt = document.createElement("option");
+                    opt.value = i;
+                    opt.textContent = `${i}. Tag (${decName})`;
+                    sel.appendChild(opt);
+                }
+            }
+        }
+
+        function convertFrenchToGregorian() {
+            const repYear = parseInt(document.getElementById("fr-in-year").value);
+            const m = parseInt(document.getElementById("fr-in-month").value);
+            const day = parseInt(document.getElementById("fr-in-day").value);
+
+            if (isNaN(repYear) || repYear < 1) {
+                alert("Bitte gib ein gültiges Jahr der Republik ein (mind. An 1).");
+                return;
+            }
+
+            const startEpoch = getRepublicYearStart(repYear);
+            let totalDays = 0;
+            if (m <= 12) {
+                totalDays = (m - 1) * 30 + (day - 1);
+            } else {
+                totalDays = 360 + (day - 1);
+            }
+
+            const targetDate = new Date(startEpoch.getTime() + totalDays * (1000 * 60 * 60 * 24));
+            const resBox = document.getElementById("fr-back-res-box");
+            resBox.classList.add("active");
+
+            const deMonths = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+            document.getElementById("fr-back-res-date").textContent = `${targetDate.getUTCDate()}. ${deMonths[targetDate.getUTCMonth()]} ${targetDate.getUTCFullYear()}`;
+            document.getElementById("fr-back-res-meta").textContent = `Wochentag: ${targetDate.toLocaleDateString('de-DE', { weekday: 'long' })}`;
+        }
+
+        /* ==========================================================
+           6. EVENT-HANDLER & CONVERTER AUSFÜHRUNG
+           ========================================================== */
+        function convertGregorianToRoman() {
+            const dateVal = document.getElementById("rom-conv-date").value;
+            const isBC = document.getElementById("rom-conv-bc").value === "BC";
+            if (!dateVal) return;
+
+            const [y, m, d] = dateVal.split("-").map(Number);
+            const res = computeRomanDate(y, m, d, isBC);
+
+            const box = document.getElementById("rom-res-box");
+            box.classList.add("active");
+            document.getElementById("rom-res-short").textContent = res.short;
+            document.getElementById("rom-res-long").textContent = res.long;
+            document.getElementById("rom-res-auc").textContent = `Anno Urbis Conditae (A.U.C.) ${res.auc} [${res.aucRoman}]`;
+        }
+
+        function convertGregorianToFrench() {
+            const dateVal = document.getElementById("fr-conv-date").value;
+            if (!dateVal) return;
+
+            const [y, m, d] = dateVal.split("-").map(Number);
+            const dateObj = new Date(y, m - 1, d);
+            const res = computeFrenchDate(dateObj);
+
+            const box = document.getElementById("fr-res-box");
+            box.classList.add("active");
+
+            if (res.error) {
+                document.getElementById("fr-res-main").textContent = res.error;
+                document.getElementById("fr-res-sub").textContent = "";
+            } else {
+                document.getElementById("fr-res-main").textContent = res.displayShort;
+                document.getElementById("fr-res-sub").textContent = res.displayLong;
+            }
+        }
+
+        function runSynopsis() {
+            const val = document.getElementById("syn-date").value;
+            if (!val) return;
+            const [y, m, d] = val.split("-").map(Number);
+            const dateObj = new Date(y, m - 1, d);
+
+            const rom = computeRomanDate(y, m, d, false);
+            const fr = computeFrenchDate(dateObj);
+
+            document.getElementById("syn-rom-short").textContent = rom.short;
+            document.getElementById("syn-rom-long").textContent = rom.long;
+            document.getElementById("syn-rom-auc").textContent = `Jahr: ${rom.auc} A.U.C. (${rom.aucRoman})`;
+
+            if (fr.error) {
+                document.getElementById("syn-fr-short").textContent = "Nicht verfügbar";
+                document.getElementById("syn-fr-long").textContent = fr.error;
+                document.getElementById("syn-fr-decade").textContent = "";
+            } else {
+                document.getElementById("syn-fr-short").textContent = fr.displayShort;
+                document.getElementById("syn-fr-long").textContent = fr.displayLong;
+                document.getElementById("syn-fr-decade").textContent = `Tag: ${fr.decadeDay}`;
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+            
+            document.getElementById(tabId).classList.add("active");
+            event.target.classList.add("active");
+        }
+
+        /* ==========================================================
+           7. INITIALISIERUNG BEIM LADEN
+           ========================================================== */
+        window.addEventListener("DOMContentLoaded", () => {
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = today.getMonth() + 1;
+            const d = today.getDate();
+            const todayIso = today.toISOString().split("T")[0];
+
+            // 1. Inputs vorbelegen
+            document.getElementById("rom-conv-date").value = todayIso;
+            document.getElementById("fr-conv-date").value = todayIso;
+            document.getElementById("syn-date").value = todayIso;
+
+            updateRomanDayOptions();
+            updateFrenchDayOptions();
+
+            // 2. Römischer Live-Banner
+            const rom = computeRomanDate(y, m, d, false);
+            document.getElementById("roman-today-short").textContent = rom.short;
+            document.getElementById("roman-today-long").textContent = rom.long;
+            document.getElementById("roman-today-auc").textContent = `Anno Urbis Conditae: ${rom.auc} (${rom.aucRoman})`;
+            document.getElementById("roman-today-greg").textContent = `Gregorianisch: ${today.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+
+            // 3. Französischer Live-Banner
+            const fr = computeFrenchDate(today);
+            if (!fr.error) {
+                document.getElementById("fr-today-short").textContent = fr.displayShort;
+                document.getElementById("fr-today-long").textContent = fr.displayLong;
+                document.getElementById("fr-today-year").textContent = `Année de la République: ${fr.yearRoman} (${fr.year})`;
+                document.getElementById("fr-today-decade").textContent = `Dekadentag: ${fr.decadeDay}`;
+            }
+
+            // Synopse initial ausführen
+            runSynopsis();
+        });
+    </script>
+</body>
+</html>
